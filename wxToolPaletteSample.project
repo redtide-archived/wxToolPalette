@@ -9,6 +9,8 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <File Name="main.cpp"/>
+    <File Name="toolpalette.h"/>
+    <File Name="toolpalette.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

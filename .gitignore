@@ -1,4 +1,8 @@
+bin
+lib
+obj
 codeblocks
 codelite
 gmake
+share
 vs20*

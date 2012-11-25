@@ -11,7 +11,7 @@
 project "wxToolPaletteSample"
     kind                    "WindowedApp"
 
-    files                   {"../../main.cpp"}
+    files                   {"../../samples/toolpalette/toolpalette.cpp"}
     includedirs             { "../../include"}
 
     defines                 {"NO_GCC_PRAGMA"}
@@ -46,8 +46,8 @@ project "wxToolPaletteSample"
         targetdir           "../../output"
 
     if wxCompiler == "gcc" then
-        buildoptions    {"-gstabs"}
-        links           {"bfd", "iberty", "psapi", "imagehlp"}
+        buildoptions        {"-gstabs"}
+        links               {"bfd", "iberty", "psapi", "imagehlp"}
     end
 
     configuration "Debug"

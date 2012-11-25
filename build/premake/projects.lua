@@ -14,4 +14,3 @@ if _ACTION ~= "gmake" then
 end
     dofile( scriptDir .. "/wxtoolpalette.lua" )
     dofile( scriptDir .. "/wxtoolpalette_sample.lua" )
---  dofile( scriptDir .. "/utilities.lua" )

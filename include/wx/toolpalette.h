@@ -1,13 +1,54 @@
 #ifndef _WXTOOLPALETTE_GENERIC_H_
 #define _WXTOOLPALETTE_GENERIC_H_
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxToolPaletteNameStr[];
+#include "toolpalette_defs.h" // Remove this when adding code in wx
+
+#include <wx/control.h>
+#include <wx/event.h>
+
+// ============================================================================
+// wxToolPaletteItem
+// ============================================================================
+
+class wxToolPaletteGroup;
+class wxToolPalette;
+
+class WXDLLIMPEXP_TOOLPALETTE wxToolPaletteItem
+{
+public:
+    wxToolPaletteItem(wxWindowID id, const wxString &label,
+                      const wxBitmap &bitmap, wxItemKind kind = wxITEM_NORMAL,
+                      const wxBitmap &bmpDisabled = wxNullBitmap);
+
+    wxToolPaletteItem(wxWindowID id, wxWindow *control, long style=0);
+    wxToolPaletteItem();
+    ~wxToolPaletteItem();
+
+    wxToolPaletteItem &SetHelp(const wxString &);
+    wxToolPaletteItem &SetBitmap(const wxBitmap &);
+    wxToolPaletteItem &SetDisabledBitmap(const wxBitmap &);
+    wxToolPaletteItem &SetClientObject(wxClientData *);
+    wxToolPaletteItem &SetClientData(void *);
+
+    wxString           GetHelp() const;
+    wxBitmap           GetBitmap() const;
+    wxBitmap           GetDisabledBitmap() const;
+    wxClientData *     GetClientObject() const;
+    void *             GetClientData() const;
+
+    wxWindow *GetControl();
+    wxWindowID GetId();
+
+    size_t              GetIndex();
+    wxToolPalette      *GetPalette();
+    wxToolPaletteGroup *GetGroup();
+};
 
 // ============================================================================
 // wxToolPaletteGroup
 // ============================================================================
 
-class wxToolPaletteGroup 
+class WXDLLIMPEXP_TOOLPALETTE wxToolPaletteGroup 
 {
 public:
     wxToolPaletteGroup(const wxString &label, bool exclusive = false,
@@ -37,20 +78,33 @@ public:
 // wxToolPalette
 // ============================================================================
 
-class wxToolPalette : public wxControl
+class WXDLLIMPEXP_TOOLPALETTE wxToolPalette : public wxControl
 {
 public:
-    wxToolPalette(wxWindow *parent, wxWindowID id = wxID_ANY,
-                  const wxPoint &pos = wxDefaultPosition,
-                  const wxSize &size = wxDefaultSize, long style=0,
-                  const wxString &name = wxToolPaletteNameStr);
+    wxToolPalette() { Init(); }
 
-    ~wxToolPalette();
+    wxToolPalette(wxWindow *parent,
+                  wxWindowID         id        = wxID_ANY,
+                  const wxPoint&     pos       = wxDefaultPosition,
+                  const wxSize&      size      = wxDefaultSize,
+                  long               style     = 0,
+                  const wxValidator& validator = wxDefaultValidator,
+                  const wxString&    name      = "wxToolPalette")
+    {
+        Init();
 
-    bool Create(wxWindow *parent, wxWindowID id = wxID_ANY,
-                const wxPoint &pos = wxDefaultPosition,
-                const wxSize &size = wxDefaultSize,
-                long style=0, const wxString &name = wxToolPaletteNameStr);
+        Create(parent, id, pos, size, style, validator, name);
+    }
+
+    virtual ~wxToolPalette();
+
+    bool Create(wxWindow           *parent,
+                wxWindowID         id        = wxID_ANY,
+                const wxPoint&     pos       = wxDefaultPosition,
+                const wxSize&      size      = wxDefaultSize,
+                long               style     = 0,
+                const wxValidator& validator = wxDefaultValidator,
+                const wxString&    name      = "wxToolPalette");
 
     void Realize();
 
@@ -61,13 +115,16 @@ public:
     size_t               GetGroupCount() const;
 
     wxToolPaletteItem *  FindItem(wxWindowID id);
+
+private:
+    void Init();
 };
 
 // ============================================================================
 // wxToolPaletteEvent
 // ============================================================================
 
-class wxToolPaletteEvent : public wxNotifyEvent
+class WXDLLIMPEXP_TOOLPALETTE wxToolPaletteEvent : public wxNotifyEvent
 {
 public:
     wxToolPaletteEvent(wxEventType commandType = wxEVT_NULL, int id = 0)
@@ -97,14 +154,16 @@ public:
         m_item  = event.m_item;
     }
 
+    virtual wxEvent* Clone() const { return new wxToolPaletteEvent(*this); }
+
     wxToolPaletteGroup *GetGroup() const { return m_group; }
     wxToolPaletteItem  *GetItem()  const { return m_item; }
-
-    virtual wxEvent* Clone() const { return new wxTreeListEvent(*this); }
 
 private:
     wxToolPaletteGroup *m_group;
     wxToolPaletteItem  *m_item;
+
+    wxDECLARE_DYNAMIC_CLASS(wxToolPaletteEvent);
 };
 
 // ----------------------------------------------------------------------------
@@ -120,7 +179,7 @@ typedef void (wxEvtHandler::*wxToolPaletteEventFunction)(wxToolPaletteEvent&);
     wx__DECLARE_EVT1(wxEVT_COMMAND_TOOLPALETTE_##name, id, wxToolPaletteEventHandler(fn))
 
 #define wxDECLARE_TOOLPALETTE_EVENT(name) \
-    wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, \
+    wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_TOOLPALETTE, \
                               wxEVT_COMMAND_TOOLPALETTE_##name, \
                               wxToolPaletteEvent)
 
